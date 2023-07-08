@@ -9,14 +9,14 @@ from local_chern_marker import local_chern_marker01
 
 
 a = 1#lattice constant
-n = 15 #systemsize x axis
-m = 15 #systemsize y axis
+n = 10 #systemsize x axis
+m = 10 #systemsize y axis
 pointdata = honeycomb_lattice.vertex_create(a,n,m)
 #hamiltonian parameter
-M = 2 #haldane parameter site energy
+M = 4 #haldane parameter site energy
 t1 = 1.0 #haldane nn hopping parameter
-t2 = 1 + 0j #haldae nnn hopping parameter
-phi = math.pi/5 #local flux mod pi
+t2 = 1/3 + 0j #haldae nnn hopping parameter
+phi = math.pi*0.4 #local flux mod pi
 filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/"
 
 #fermi_energy = 0.1
@@ -84,10 +84,11 @@ def main():
     imgname = "haldane_eigval" + str(n) + "times" + str(m)
     fermi_energy = eigenenergy(H,filepath,imgname)
 
+
     imgname_crosshair = "haldane_crosshair" + str(n) + "times" + str(m)
     #crosshair_marker01.plot(H,pointdata[0],fermi_energy,Rx,Ry,filepath,imgname_crosshair)
     imgname_local = "haldane_local_C" + str(n) + "times" + str(m)
-    #crosshair_marker01.local_marker(H,pointdata[0],fermi_energy,filepath,imgname_local)
+    crosshair_marker01.local_marker(H,pointdata[0],fermi_energy,filepath,imgname_local)
 
     imgname_localC = "haldane_local_Cmarker" + str(n) + "times" + str(m)
     local_chern_marker01.plot(H,pointdata[0],fermi_energy,filepath,imgname_localC)
