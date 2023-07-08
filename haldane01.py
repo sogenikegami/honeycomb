@@ -9,8 +9,8 @@ from local_chern_marker import local_chern_marker01
 
 
 a = 1#lattice constant
-n = 10 #systemsize x axis
-m = 10 #systemsize y axis
+n = 5 #systemsize x axis
+m = 5 #systemsize y axis
 pointdata = honeycomb_lattice.vertex_create(a,n,m)
 #hamiltonian parameter
 M = 4 #haldane parameter site energy
@@ -76,7 +76,7 @@ def eigenenergy(H,filepath,imgname):
     plt.hlines(eigenergy[int(len(H[0])/2)],0,len(eigval),linestyle="dashed",color='red')
     fig.show()
     plt.savefig(filepath + imgname)
-    fermi_energy = eigenergy[int(len(H[0])/2)]
+    fermi_energy = (eigenergy[int(len(H[0])/2)-1]+eigenergy[int(len(H[0])/2)-2])/2
     return fermi_energy
 
 def main():
