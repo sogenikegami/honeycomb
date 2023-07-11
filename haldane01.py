@@ -9,23 +9,31 @@ from local_chern_marker import local_chern_marker01
 
 
 a = 1#lattice constant
-n = 10 #systemsize x axis
-m = 10 #systemsize y axis
-pointdata = honeycomb_lattice.vertex_create(a,n,m)
+n = 5 #systemsize x axis
+m = 5 #systemsize y axis
+
+#boundary condition 
+xPBC = False
+yPBC = True
+
+pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
 #hamiltonian parameter
-M = 1.1 #haldane parameter site energy
-t1 = 1.0 #haldane nn hopping parameter
-t2 = 0.3 + 0j #haldae nnn hopping parameter
-phi = math.pi*0.17 #local flux mod pi
+M = 0.4 #haldane parameter site energy
+t1 = -1.0 #haldane nn hopping parameter
+t2 = 0.15 + 0j #haldae nnn hopping parameter
+phi = (-1)*math.pi/3 #local flux mod pi
 filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/"
 
 #fermi_energy = 0.1
-Rx = 4 #crosshair position
-Ry = 4 #crosshair position
+Rx = 5 #crosshair position
+Ry = 8 #crosshair position
+
+
+
 
 def hsite(pointdata,M):
     vertexdata = pointdata[0]
-    plaquettedata = pointdata[1]
+    #plaquettedata = pointdata[1]
     N = len(vertexdata)
     H = np.zeros((N,N))*0j
     for i in range(N):
@@ -37,7 +45,7 @@ def hsite(pointdata,M):
 
 def hhop1(pointdata,t1):
     vertexdata = pointdata[0]
-    plaquettedata = pointdata[1]
+    #plaquettedata = pointdata[1]
     N = len(vertexdata)
     H = np.zeros((N,N))*0j
     for i in range(N):
@@ -81,16 +89,16 @@ def eigenenergy(H,filepath,imgname):
 
 def main():
     H = hamiltonian(pointdata,M,t1,t2,phi)
-    imgname = "haldane_eigval" + str(n) + "times" + str(m)+"(b)"
+    imgname = "haldane_eigval" + str(n) + "times" + str(m)
     fermi_energy = eigenenergy(H,filepath,imgname)
 
 
-    imgname_crosshair = "haldane_crosshair" + str(n) + "times" + str(m)
-    #crosshair_marker01.plot(H,pointdata[0],fermi_energy,Rx,Ry,filepath,imgname_crosshair)
-    imgname_local = "local_C_from_ch" + str(n) + "times" + str(m) +"(b)"
+    imgname_crosshair = "crosshair" + str(n) + "times" + str(m)
+    crosshair_marker01.plot(H,pointdata[0],fermi_energy,Rx,Ry,filepath,imgname_crosshair)
+    imgname_local = "local_C_from_ch" + str(n) + "times" + str(m) 
     crosshair_marker01.local_marker(H,pointdata[0],fermi_energy,filepath,imgname_local)
 
-    imgname_localC = "local_C" + str(n) + "times" + str(m) +"(b)"
+    imgname_localC = "local_C" + str(n) + "times" + str(m) 
     local_chern_marker01.plot(H,pointdata[0],fermi_energy,filepath,imgname_localC)
 
 if __name__ == "__main__":
