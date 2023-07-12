@@ -9,8 +9,8 @@ from local_chern_marker import local_chern_marker01
 
 
 a = 1#lattice constant
-n = 20 #systemsize x axis
-m = 20 #systemsize y axis
+n = 15 #systemsize x axis
+m = 30 #systemsize y axis
 
 #boundary condition 
 xPBC = False
@@ -18,10 +18,10 @@ yPBC = True
 
 pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
 #hamiltonian parameter
-M = 0.4 #haldane parameter site energy
-t1 = -1.0 #haldane nn hopping parameter
-t2 = 0.15 + 0j #haldae nnn hopping parameter
-phi = (-1)*math.pi/3 #local flux mod pi
+M = 1/3 #haldane parameter site energy
+t1 = 1.0 #haldane nn hopping parameter
+t2 = 1/3 + 0j #haldae nnn hopping parameter
+phi = math.pi/3 #local flux mod pi
 filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/"
 
 #fermi_energy = 0.1
@@ -86,6 +86,7 @@ def fourier_y(vertexdata,H,ky):
     energy = []
     for i in range(len(eigval)):
         energy.append(eigval[i].real)
+    energy.sort()
     """
     fig=plt.figure()
     ax = fig.add_subplot(1,1,1)
@@ -97,12 +98,16 @@ def fourier_y(vertexdata,H,ky):
 
 def y_band_plot(vertexdata,H,imgname):
     L = 2*math.pi/math.sqrt(3)/a/(m+1)
+    K = np.linspace(0,L*(m+1),m+1)
+    E = np.zeros((2*n+2,m+1))
     fig=plt.figure()
     ax = fig.add_subplot(1,1,1)
     for i in range(m+1):
         energy = fourier_y(vertexdata,H,i*L,)
         for j in range(len(energy)):
-            plt.plot(i*L,energy[j],'.',color='blue')
+            E[j][i] += energy[j]
+    for i in range(2*n+2):
+        plt.plot(K,E[i],color='black')
     plt.savefig(filepath + imgname)
     fig.show()
     return 0
