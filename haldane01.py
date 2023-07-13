@@ -18,7 +18,7 @@ yPBC = True
 
 pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
 #hamiltonian parameter
-M = 1/3 #haldane parameter site energy
+M = 1 #haldane parameter site energy
 t1 = 1.0 #haldane nn hopping parameter
 t2 = 1/3 + 0j #haldae nnn hopping parameter
 phi = math.pi/3 #local flux mod pi
@@ -67,7 +67,7 @@ def hhop2(pointdata,t2,phi):
     return H
 
 def hamiltonian(pointdata,M,t1,t2,phi):
-    H = hsite(pointdata,M) - hhop1(pointdata,t1) - hhop2(pointdata,t2,phi)
+    H = hsite(pointdata,M) + hhop1(pointdata,t1) + hhop2(pointdata,t2,phi)
     return H
 
 def fourier_y(vertexdata,H,ky):
