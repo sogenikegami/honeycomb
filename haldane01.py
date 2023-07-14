@@ -18,9 +18,9 @@ yPBC = True
 
 pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
 #hamiltonian parameter
-M = 1.4 #haldane parameter site energy
+M = 1.0 #haldane parameter site energy
 t1 = 1.0 #haldane nn hopping parameter
-t2 = 1/3 + 0j #haldae nnn hopping parameter
+t2 = 0.333 + 0j #haldae nnn hopping parameter
 phi = math.pi/3 #local flux mod pi
 filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/"
 
@@ -179,12 +179,13 @@ def main():
 
     imgname_yfourier = "ky_band" + str(n) + "times" + str(m) 
     xnumber =1
-    y_band_plot(pointdata[0],H,imgname_yfourier)
+    #y_band_plot(pointdata[0],H,imgname_yfourier)
     #imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"(02)"
 
     imgname4xfourier = "kx_band" + str(n) + "times" + str(m) +"(01)"
     #x_band_plot(pointdata[0],H,imgname4xfourier)
     #test(2,2)
+    print(pointdata[0][0]["neighbor"])
     return 0
 
 if __name__ == "__main__":
