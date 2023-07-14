@@ -9,16 +9,16 @@ from local_chern_marker import local_chern_marker01
 
 
 a = 1#lattice constant
-n = 15 #systemsize x axis
+n = 10 #systemsize x axis
 m = 30 #systemsize y axis
 
 #boundary condition 
-xPBC = False
+xPBC =False
 yPBC = True
 
 pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
 #hamiltonian parameter
-M = 1 #haldane parameter site energy
+M = 1.4 #haldane parameter site energy
 t1 = 1.0 #haldane nn hopping parameter
 t2 = 1/3 + 0j #haldae nnn hopping parameter
 phi = math.pi/3 #local flux mod pi
@@ -82,31 +82,59 @@ def fourier_y(vertexdata,H,ky):
                     yl = vertexdata[j+2*(n+1)*l]["pos"][1]
                     phase = math.cos(ky*yl-ky*yk) + 1j*math.sin(ky*yl-ky*yk)
                     h[i][j] += phase/2/math.pi * H[i+2*(n+1)*k][j+l*2*(n+1)]
-    eigval,eigvec = np.linalg.eig(h)
+    eigval,eigvec = np.linalg.eigh(h)
     energy = []
     for i in range(len(eigval)):
         energy.append(eigval[i].real)
     energy.sort()
-    """
-    fig=plt.figure()
-    ax = fig.add_subplot(1,1,1)
-    ax.scatter(ky,energy)
-    plt.savefig(filepath + imgname)
-    fig.show()
-    """
     return energy
 
 def y_band_plot(vertexdata,H,imgname):
     L = 2*math.pi/math.sqrt(3)/a/(m+1)
-    K = np.linspace(0,L*(m+1),m+1)
+    K = np.linspace(-L*(m+1)/2,L*(m+1)/2,m+1)
     E = np.zeros((2*n+2,m+1))
     fig=plt.figure()
     ax = fig.add_subplot(1,1,1)
     for i in range(m+1):
-        energy = fourier_y(vertexdata,H,i*L,)
+        energy = fourier_y(vertexdata,H,(i-(m+1)/2)*L,)
         for j in range(len(energy)):
             E[j][i] += energy[j]
     for i in range(2*n+2):
+        plt.plot(K,E[i],color='black')
+    plt.savefig(filepath + imgname)
+    fig.show()
+    return 0
+
+def fourier_x(vertexdata,H,kx):
+    N = len(vertexdata)
+
+    h = np.zeros((4*(m+1),4*(m+1)))*0j
+    for i in range(4*(m+1)):
+        for j in range(4*(m+1)):
+            for k in range(int((n+1)/2)):
+                for l in range(int((n+1)/2)):
+                    xk = vertexdata[2*(n+1)*int(i/4)+4*k+(i%4)]["pos"][0]
+                    xl = vertexdata[2*(n+1)*int(j/4)+4*l+(j%4)]["pos"][0]
+                    phase = math.cos(kx*xl-kx*xk) + 1j*math.sin(kx*xl-kx*xk)
+                    h[i][j] += phase/2/math.pi * H[2*(n+1)*int(i/4)+4*k+(i%4)][2*(n+1)*int(j/4)+4*l+(j%4)]
+    eigval,eigvec = np.linalg.eigh(h)
+    energy = []
+    for i in range(len(eigval)):
+        energy.append(eigval[i].real)
+    energy.sort()
+    return energy
+
+def x_band_plot(vertexdata,H,imgname):
+    L = 2*math.pi/3/a/(n+1)*2
+    K = np.linspace(-L*(n+1)/4,L*(n+1)/4,int((n+1)/2))
+    E = np.zeros((4*(m+1),int((n+1)/2)))
+    fig=plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    for i in range(int((n+1)/2)):
+        energy = fourier_x(vertexdata,H,(i-(n+1)/4)*L)
+        for j in range(len(energy)):
+            E[j][i] += energy[j]
+    for i in range(4*(m+1)):
         plt.plot(K,E[i],color='black')
     plt.savefig(filepath + imgname)
     fig.show()
@@ -131,6 +159,10 @@ def eigenenergy(H,filepath,imgname):
     
     return fermi_energy
 
+def test(a,b):
+    print(int(a/b))
+    return 0
+
 def main():
     H = hamiltonian(pointdata,M,t1,t2,phi)
     imgname = "haldane_eigval" + str(n) + "times" + str(m)
@@ -148,7 +180,11 @@ def main():
     imgname_yfourier = "ky_band" + str(n) + "times" + str(m) 
     xnumber =1
     y_band_plot(pointdata[0],H,imgname_yfourier)
-    imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"(02)"
+    #imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"(02)"
+
+    imgname4xfourier = "kx_band" + str(n) + "times" + str(m) +"(01)"
+    #x_band_plot(pointdata[0],H,imgname4xfourier)
+    #test(2,2)
     return 0
 
 if __name__ == "__main__":
