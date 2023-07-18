@@ -9,18 +9,20 @@ from local_chern_marker import local_chern_marker01
 
 
 a = 1#lattice constant
-n = 10 #systemsize x axis
-m = 30 #systemsize y axis
+n = 15 #systemsize x axis
+m = 15 #systemsize y axis
 
 #boundary condition 
 xPBC =False
-yPBC = True
+yPBC =True
 
 pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
+yPBC = False
+pointdata2 = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
 #hamiltonian parameter
-M = 1.0 #haldane parameter site energy
+M = 2.0 #haldane parameter site energy
 t1 = 1.0 #haldane nn hopping parameter
-t2 = 0.333 + 0j #haldae nnn hopping parameter
+t2 = 1/3 #haldae nnn hopping parameter
 phi = math.pi/3 #local flux mod pi
 filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/"
 
@@ -81,15 +83,15 @@ def fourier_y(vertexdata,H,ky):
                     yk = vertexdata[i+2*(n+1)*k]["pos"][1]
                     yl = vertexdata[j+2*(n+1)*l]["pos"][1]
                     phase = math.cos(ky*yl-ky*yk) + 1j*math.sin(ky*yl-ky*yk)
-                    h[i][j] += phase/2/math.pi * H[i+2*(n+1)*k][j+l*2*(n+1)]
-    eigval,eigvec = np.linalg.eigh(h)
+                    h[i][j] += phase/a/math.sqrt(3)/m * H[i+2*(n+1)*k][j+l*2*(n+1)]
+    eigval,eigvec = np.linalg.eig(h)
     energy = []
     for i in range(len(eigval)):
         energy.append(eigval[i].real)
     energy.sort()
     return energy
 
-def y_band_plot(vertexdata,H,imgname):
+def y_band_plot(vertexdata,H,imgname,fermi_energy):
     L = 2*math.pi/math.sqrt(3)/a/(m+1)
     K = np.linspace(-L*(m+1)/2,L*(m+1)/2,m+1)
     E = np.zeros((2*n+2,m+1))
@@ -101,9 +103,10 @@ def y_band_plot(vertexdata,H,imgname):
             E[j][i] += energy[j]
     for i in range(2*n+2):
         plt.plot(K,E[i],color='black')
+    plt.hlines(fermi_energy,-L*(m+1)/2,L*(m+1)/2,linestyle="dashed",color='red')
     plt.savefig(filepath + imgname)
     fig.show()
-    return 0
+    return E
 
 def fourier_x(vertexdata,H,kx):
     N = len(vertexdata)
@@ -165,27 +168,26 @@ def test(a,b):
 
 def main():
     H = hamiltonian(pointdata,M,t1,t2,phi)
-    imgname = "haldane_eigval" + str(n) + "times" + str(m)
+    imgname = "haldane_eigval" + str(n) + "times" + str(m) +"xPBC"
     fermi_energy = eigenenergy(H,filepath,imgname)
 
 
-    imgname_crosshair = "crosshair" + str(n) + "times" + str(m)
-    #crosshair_marker01.plot(H,pointdata[0],fermi_energy,Rx,Ry,filepath,imgname_crosshair)
+    imgname_crosshair = "crosshair" + str(n) + "times" + str(m) +"xPBC"
+    crosshair_marker01.plot(H,pointdata[0],fermi_energy,Rx,Ry,filepath,imgname_crosshair)
     imgname_local = "local_C_from_ch" + str(n) + "times" + str(m) 
     #crosshair_marker01.local_marker(H,pointdata[0],fermi_energy,filepath,imgname_local)
 
-    imgname_localC = "local_C" + str(n) + "times" + str(m) 
-    #local_chern_marker01.plot(H,pointdata[0],fermi_energy,filepath,imgname_localC)
+    imgname_localC = "local_C" + str(n) + "times" + str(m) +"xPBC"
+    local_chern_marker01.plot(H,pointdata[0],fermi_energy,filepath,imgname_localC)
 
-    imgname_yfourier = "ky_band" + str(n) + "times" + str(m) 
-    xnumber =1
-    #y_band_plot(pointdata[0],H,imgname_yfourier)
-    #imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"(02)"
+    imgname_yfourier = "ky_band_test" 
+    Epbc = y_band_plot(pointdata[0],H,imgname_yfourier,fermi_energy)
+    imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"open"
+    #open = y_band_plot(pointdata2[0],hamiltonian(pointdata2,M,t1,t2,phi),imgname_yfourier)
+    #print(Epbc-open)
 
-    imgname4xfourier = "kx_band" + str(n) + "times" + str(m) +"(01)"
+    imgname4xfourier = "kx_band" + str(n) + "times" + str(m) +"xPBC"
     #x_band_plot(pointdata[0],H,imgname4xfourier)
-    #test(2,2)
-    print(pointdata[0][0]["neighbor"])
     return 0
 
 if __name__ == "__main__":
