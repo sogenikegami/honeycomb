@@ -167,24 +167,26 @@ def test(a,b):
 
 def main():
     H = hamiltonian(pointdata,M,t1,t2,phi)
-    imgname = "haldane_eigval" + str(n) + "times" + str(m) +"xPBC"
+    imgname = "haldane_eigval" + str(n) + "times" + str(m) +"yPBC"
     fermi_energy = eigenenergy(H,filepath,imgname)
 
-
-    imgname_crosshair = "crosshair" + str(n) + "times" + str(m) +"xPBC"
+    #crosshair
+    imgname_crosshair = "crosshair" + str(n) + "times" + str(m) +"yPBC"
     crosshair_marker01.plot(H,pointdata[0],fermi_energy,Rx,Ry,filepath,imgname_crosshair)
-    imgname_local = "local_C_from_ch" + str(n) + "times" + str(m) 
-    #crosshair_marker01.local_marker(H,pointdata[0],fermi_energy,filepath,imgname_local)
 
-    imgname_localC = "local_C" + str(n) + "times" + str(m) +"xPBC"
+    #local chern from crosshair
+    imgname_local = "local_C_from_ch" + str(n) + "times" + str(m) +"yPBC"
+    crosshair_marker01.local_marker(H,pointdata[0],fermi_energy,filepath,imgname_local)
+
+    #local chern
+    imgname_localC = "local_C" + str(n) + "times" + str(m) +"yPBC"
     local_chern_marker01.plot(H,pointdata[0],fermi_energy,filepath,imgname_localC)
 
-    imgname_yfourier = "ky_band_test" 
+    #yband
+    imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"yPBC"
     Epbc = y_band_plot(pointdata[0],H,imgname_yfourier,fermi_energy)
-    imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"open"
-    #open = y_band_plot(pointdata2[0],hamiltonian(pointdata2,M,t1,t2,phi),imgname_yfourier)
-    #print(Epbc-open)
 
+    #xband
     imgname4xfourier = "kx_band" + str(n) + "times" + str(m) +"xPBC"
     #x_band_plot(pointdata[0],H,imgname4xfourier)
     return 0
