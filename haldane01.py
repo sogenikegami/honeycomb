@@ -17,10 +17,9 @@ xPBC =False
 yPBC =True
 
 pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
-yPBC = False
-pointdata2 = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
+
 #hamiltonian parameter
-M = 2.0 #haldane parameter site energy
+M = 1.0 #haldane parameter site energy
 t1 = 1.0 #haldane nn hopping parameter
 t2 = 1/3 #haldae nnn hopping parameter
 phi = math.pi/3 #local flux mod pi
@@ -64,7 +63,7 @@ def hhop2(pointdata,t2,phi):
     for i in range(N):
         nnn = vertexdata[i]["secondneighbor"]
         for j in range(len(nnn)):
-            eiphi = math.cos(phi) + 1j * math.sin(phi) * nnn[j][1]
+            eiphi = math.cos(phi) + 1j * math.sin(phi) * nnn[j][1] * (1-2*(i%2))
             H[nnn[j][0]][i] += t2 * eiphi
     return H
 
