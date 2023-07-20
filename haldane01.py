@@ -14,7 +14,7 @@ m = 9 #systemsize y axis
 
 #boundary condition 
 xPBC =False
-yPBC =True
+yPBC =False
 
 pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
 
@@ -23,7 +23,7 @@ M = 1.0 #haldane parameter site energy
 t1 = 1.0 #haldane nn hopping parameter
 t2 = 1/3 #haldae nnn hopping parameter
 phi = math.pi/3 #local flux mod pi
-filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/"
+filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/9times9open/"
 
 #fermi_energy = 0.1
 Rx = 5 #crosshair position
@@ -188,15 +188,22 @@ def diff(local_c,local_c_from_ch,imgname):
     plotmap(pointdata[0],difflist,imgname)
     return difflist
 
-def diff1d_plot(vertexdata,nx,list,imgname):
+def diff1d_plot(vertexdata,nx,local_c,local_c_from_ch,imgname):
     Y = []
     difflist = []
+    lc_ch = []
+    lc = []
+    for i in range(len(local_c)):
+        difflist.append(local_c[i]-local_c_from_ch[i])
     for i in range(m):
         Y.append(vertexdata[nx+2*(n+1)*i]["pos"][1])
-        difflist.append(list[nx+2*(n+1)*i])
+        lc_ch.append(local_c_from_ch[nx+2*(n+1)*i])
+        lc.append(local_c[nx+2*(n+1)*i])
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
-    plt.plot(Y,difflist,color = 'black',linewidth = 1)
+    plt.plot(Y,difflist,color = 'black',linewidth = 1,label = 'difference')
+    plt.plot(Y,lc,color = 'red',linewidth = 1,label = 'local_C')
+    plt.plot(Y,lc_ch,color = 'blue',linewidth = 1,label = 'local_C from crosshair')
     fig.show()
     plt.savefig(filepath + imgname)
 
@@ -232,7 +239,7 @@ def main():
 
     #difference 1D cut plot
     imgname4diff_1D = 'diff_1D'+ str(n) + "times" + str(m) +"yPBC"
-    diff1d_plot(pointdata[0],8,difflist,imgname4diff_1D)
+    diff1d_plot(pointdata[0],8,local_c,local_c_from_ch,imgname4diff_1D)
     return 0
 
 if __name__ == "__main__":
