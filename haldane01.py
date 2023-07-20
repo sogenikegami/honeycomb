@@ -13,7 +13,7 @@ n = 9 #systemsize x axis
 m = 9 #systemsize y axis
 
 #boundary condition 
-xPBC =False
+xPBC =True
 yPBC =False
 
 pointdata = honeycomb_lattice.vertex_create(a,n,m,xPBC,yPBC)
@@ -23,7 +23,7 @@ M = 1.0 #haldane parameter site energy
 t1 = 1.0 #haldane nn hopping parameter
 t2 = 1/3 #haldae nnn hopping parameter
 phi = math.pi/3 #local flux mod pi
-filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/9times9open/"
+filepath = "/Users/sogenikegami/Documents/UT4S/non-crystal/honeycomb/image/9times9xPBC/"
 
 #fermi_energy = 0.1
 Rx = 5 #crosshair position
@@ -190,6 +190,7 @@ def diff(local_c,local_c_from_ch,imgname):
 
 def diff1d_plot(vertexdata,nx,local_c,local_c_from_ch,imgname):
     Y = []
+    X = []
     difflist = []
     lc_ch = []
     lc = []
@@ -198,15 +199,17 @@ def diff1d_plot(vertexdata,nx,local_c,local_c_from_ch,imgname):
         difflist.append(local_c[i]-local_c_from_ch[i])
     for i in range(m):
         Y.append(vertexdata[nx+2*(n+1)*i]["pos"][1])
+        X.append(vertexdata[nx+2*(n+1)*i]["pos"][0])
         lc_ch.append(local_c_from_ch[nx+2*(n+1)*i])
         lc.append(local_c[nx+2*(n+1)*i])
         difference.append(difflist[nx+2*(n+1)*i])
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
-    plt.plot(Y,difference,color = 'black',linewidth = 1,label = "difference")
-    plt.plot(Y,lc,color = 'red',linewidth = 1,label = "local_C")
-    plt.plot(Y,lc_ch,color = 'blue',linewidth = 1,label = "local_C from crosshair")
-    plt.show()
+    plt.plot(Y,difference,color = 'black',linewidth = 1,label = 'difference')
+    plt.plot(Y,lc,color = 'red',linewidth = 1,label = 'local_C')
+    plt.plot(Y,lc_ch,color = 'blue',linewidth = 1,label = 'local_C_from_crosshair')
+    plt.hlines(-1,0,Y[-1],linestyle="dashed",color='green')
+    plt.legend()
     plt.savefig(filepath + imgname)
 
 
@@ -229,11 +232,11 @@ def main():
 
     #yband
     imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"yPBC"
-    Epbc = y_band_plot(pointdata[0],H,imgname_yfourier,fermi_energy)
+    #Epbc = y_band_plot(pointdata[0],H,imgname_yfourier,fermi_energy)
 
     #xband
     imgname4xfourier = "kx_band" + str(n) + "times" + str(m) +"xPBC"
-    #x_band_plot(pointdata[0],H,imgname4xfourier)
+    x_band_plot(pointdata[0],H,imgname4xfourier)
 
     #difference btw local_c and local_c from crosshair
     imgname4diff = 'diff_localC'+ str(n) + "times" + str(m) +"yPBC"
@@ -241,7 +244,7 @@ def main():
 
     #difference 1D cut plot
     imgname4diff_1D = 'diff_1D'+ str(n) + "times" + str(m) +"yPBC"
-    diff1d_plot(pointdata[0],8,local_c,local_c_from_ch,imgname4diff_1D)
+    #diff1d_plot(pointdata[0],8,local_c,local_c_from_ch,imgname4diff_1D)
     return 0
 
 if __name__ == "__main__":
