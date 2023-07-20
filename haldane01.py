@@ -161,24 +161,45 @@ def eigenenergy(H,filepath,imgname):
     
     return fermi_energy
 
-def plot(vertexdata,list1,imgname):
-    fig = plt.figure()
+def plotmap(vertexdata,list1,imgname):
+    fig = plt.figure(figsize=(8.66+2,10))
     ax = fig.add_subplot(1,1,1)
     X= []
     Y = []
     for i in range(len(vertexdata)):
-        for j in range(len(vertexdata[i])):
+        X.append(vertexdata[i]["pos"][0])
+        Y.append(vertexdata[i]["pos"][1])
+        for j in range(len(vertexdata[i]["neighbor"])):
             neinum = vertexdata[i]["neighbor"][j]
             neipos = vertexdata[neinum]["pos"]
             nowpos = vertexdata[i]["pos"]
-            X.append(nowpos[0])
-            Y.append(nowpos[1])
             plt.plot([nowpos[0],neipos[0]],[nowpos[1],neipos[1]],color = 'black',linewidth = 1)
+    plt.vlines(6,0,math.sqrt(3)*a*m,linestyle="dashed",color='green')
     markermax = max(np.abs(list1))
     mappable = ax.scatter(X,Y,c=list1,cmap='bwr',s=800*np.abs(list1)/markermax,alpha=1,linewidth=0.5,edgecolors='black')
     fig.colorbar(mappable,ax=ax)
     fig.show()
-    plt.savefig(path + imgname)
+    plt.savefig(filepath + imgname)
+
+def diff(local_c,local_c_from_ch,imgname):
+    difflist = []
+    for i in range(len(local_c)):
+        difflist.append(local_c[i]-local_c_from_ch[i])
+    plotmap(pointdata[0],difflist,imgname)
+    return difflist
+
+def diff1d_plot(vertexdata,nx,list,imgname):
+    Y = []
+    difflist = []
+    for i in range(m):
+        Y.append(vertexdata[nx+2*(n+1)*i]["pos"][1])
+        difflist.append(list[nx+2*(n+1)*i])
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    plt.plot(Y,difflist,color = 'black',linewidth = 1)
+    fig.show()
+    plt.savefig(filepath + imgname)
+
 
 def main():
     H = hamiltonian(pointdata,M,t1,t2,phi)
@@ -206,11 +227,12 @@ def main():
     #x_band_plot(pointdata[0],H,imgname4xfourier)
 
     #difference btw local_c and local_c from crosshair
-    diff = []
     imgname4diff = 'diff_localC'+ str(n) + "times" + str(m) +"yPBC"
-    for i in range(len(local_c)):
-        diff.append(local_c[i]-local_c_from_ch[i])
-    plot(pointdata[0],diff,imgname4diff)
+    difflist = diff(local_c,local_c_from_ch,imgname4diff)   
+
+    #difference 1D cut plot
+    imgname4diff_1D = 'diff_1D'+ str(n) + "times" + str(m) +"yPBC"
+    diff1d_plot(pointdata[0],8,difflist,imgname4diff_1D)
     return 0
 
 if __name__ == "__main__":
