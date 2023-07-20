@@ -9,8 +9,8 @@ from local_chern_marker import local_chern_marker01
 
 
 a = 1#lattice constant
-n = 15 #systemsize x axis
-m = 15 #systemsize y axis
+n = 9 #systemsize x axis
+m = 9 #systemsize y axis
 
 #boundary condition 
 xPBC =False
@@ -161,9 +161,24 @@ def eigenenergy(H,filepath,imgname):
     
     return fermi_energy
 
-def test(a,b):
-    print(int(a/b))
-    return 0
+def plot(vertexdata,list1,imgname):
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    X= []
+    Y = []
+    for i in range(len(vertexdata)):
+        for j in range(len(vertexdata[i])):
+            neinum = vertexdata[i]["neighbor"][j]
+            neipos = vertexdata[neinum]["pos"]
+            nowpos = vertexdata[i]["pos"]
+            X.append(nowpos[0])
+            Y.append(nowpos[1])
+            plt.plot([nowpos[0],neipos[0]],[nowpos[1],neipos[1]],color = 'black',linewidth = 1)
+    markermax = max(np.abs(list1))
+    mappable = ax.scatter(X,Y,c=list1,cmap='bwr',s=800*np.abs(list1)/markermax,alpha=1,linewidth=0.5,edgecolors='black')
+    fig.colorbar(mappable,ax=ax)
+    fig.show()
+    plt.savefig(path + imgname)
 
 def main():
     H = hamiltonian(pointdata,M,t1,t2,phi)
@@ -176,11 +191,11 @@ def main():
 
     #local chern from crosshair
     imgname_local = "local_C_from_ch" + str(n) + "times" + str(m) +"yPBC"
-    crosshair_marker01.local_marker(H,pointdata[0],fermi_energy,filepath,imgname_local)
+    local_c_from_ch = crosshair_marker01.local_marker(H,pointdata[0],fermi_energy,filepath,imgname_local)
 
     #local chern
     imgname_localC = "local_C" + str(n) + "times" + str(m) +"yPBC"
-    local_chern_marker01.plot(H,pointdata[0],fermi_energy,filepath,imgname_localC)
+    local_c = local_chern_marker01.plot(H,pointdata[0],fermi_energy,filepath,imgname_localC)
 
     #yband
     imgname_yfourier = "ky_band" + str(n) + "times" + str(m) +"yPBC"
@@ -189,6 +204,13 @@ def main():
     #xband
     imgname4xfourier = "kx_band" + str(n) + "times" + str(m) +"xPBC"
     #x_band_plot(pointdata[0],H,imgname4xfourier)
+
+    #difference btw local_c and local_c from crosshair
+    diff = []
+    imgname4diff = 'diff_localC'+ str(n) + "times" + str(m) +"yPBC"
+    for i in range(len(local_c)):
+        diff.append(local_c[i]-local_c_from_ch[i])
+    plot(pointdata[0],diff,imgname4diff)
     return 0
 
 if __name__ == "__main__":
