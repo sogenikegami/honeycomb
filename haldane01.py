@@ -193,18 +193,20 @@ def diff1d_plot(vertexdata,nx,local_c,local_c_from_ch,imgname):
     difflist = []
     lc_ch = []
     lc = []
+    difference = []
     for i in range(len(local_c)):
         difflist.append(local_c[i]-local_c_from_ch[i])
     for i in range(m):
         Y.append(vertexdata[nx+2*(n+1)*i]["pos"][1])
         lc_ch.append(local_c_from_ch[nx+2*(n+1)*i])
         lc.append(local_c[nx+2*(n+1)*i])
+        difference.append(difflist[nx+2*(n+1)*i])
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
-    plt.plot(Y,difflist,color = 'black',linewidth = 1,label = 'difference')
-    plt.plot(Y,lc,color = 'red',linewidth = 1,label = 'local_C')
-    plt.plot(Y,lc_ch,color = 'blue',linewidth = 1,label = 'local_C from crosshair')
-    fig.show()
+    plt.plot(Y,difference,color = 'black',linewidth = 1,label = "difference")
+    plt.plot(Y,lc,color = 'red',linewidth = 1,label = "local_C")
+    plt.plot(Y,lc_ch,color = 'blue',linewidth = 1,label = "local_C from crosshair")
+    plt.show()
     plt.savefig(filepath + imgname)
 
 
